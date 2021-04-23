@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/lucas-clemente/quic-go/http3"
 )
@@ -18,6 +19,7 @@ func RunHTTP3Client(path string) {
 		log.Println("new request error:", err)
 		return
 	}
+	req.Header["User-Agent"] = []string{"http3.client.dilfish.dev"}
 	log.Println("request is:", req)
 	resp, err := h3Client.Do(req)
 	if err != nil {
@@ -37,6 +39,15 @@ func RunHTTP3Client(path string) {
 	if *FlagI {
 		return
 	}
-	log.Println("Resp is:")
-	log.Println(string(bt))
+	ct := http.DetectContentType(bt)
+	if len(resp.Header["Content-Type"]) > 0 && len(resp.Header["Content-Type"][0]) > 0 {
+		ct = resp.Header["Content-Type"][0]
+	}
+	log.Println("RESPONSE TYPE IS:", ct)
+	if strings.Index(ct, "text") >= 0 {
+		log.Println(string(bt))
+	} else {
+		log.Println("Binary 100 bytes:", string(bt[:100]))
+		log.Println("Binary 100 bytes:", bt[:100])
+	}
 }
