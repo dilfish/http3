@@ -1,10 +1,9 @@
 package main
 
 import (
+	"github.com/lucas-clemente/quic-go/http3"
 	"log"
 	"net/http"
-
-	"github.com/lucas-clemente/quic-go/http3"
 )
 
 type Handler struct{}
@@ -17,7 +16,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func RunHTTP2() {
-	err := http.ListenAndServeTLS(":443", CertPath, KeyPath, nil)
+	var err error
+	err = http.ListenAndServeTLS(":443", *FlagCertPath, *FlagKeyPath, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -26,5 +26,8 @@ func RunHTTP2() {
 func RunHTTP3() {
 	var h Handler
 	http.Handle("/", &h)
-	http3.ListenAndServeQUIC(":443", CertPath, KeyPath, nil)
+	err := http3.ListenAndServeQUIC(":443", *FlagCertPath, *FlagKeyPath, nil)
+	if err != nil {
+		panic(err)
+	}
 }

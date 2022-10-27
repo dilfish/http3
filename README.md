@@ -1,2 +1,2 @@
 # http3
-http3 client and servers
+http3 client and servers for testing

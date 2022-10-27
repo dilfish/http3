@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,7 +13,11 @@ import (
 func RunHTTP3Client(path string) {
 	log.Println("using:", path)
 	h3Client := http.Client{
-		Transport: &http3.RoundTripper{},
+		Transport: &http3.RoundTripper{
+			TLSClientConfig: &tls.Config{
+				ServerName: "dev.ug",
+			},
+		},
 	}
 	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
@@ -20,6 +25,7 @@ func RunHTTP3Client(path string) {
 		return
 	}
 	req.Header["User-Agent"] = []string{"http3.client.dilfish.dev"}
+	req.Header["Host"] = []string{"dev.ug"}
 	log.Println("request is:", req)
 	resp, err := h3Client.Do(req)
 	if err != nil {

@@ -48,5 +48,6 @@ func RunTLSServer() {
 		TLSConfig:    cfg,
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
-	log.Fatal(FakeListenAndServeTLS(srv, CertPath, KeyPath))
+	log.Println(srv)
+	// log.Fatal(FakeListenAndServeTLS(srv, CertPath, KeyPath))
 }
